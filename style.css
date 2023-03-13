@@ -1,3 +1,7 @@
+:root{
+    --purple: #6066D0B2;
+}
+
 body{
     background-image: url(./images/background.png);
     background-repeat: no-repeat;
@@ -16,7 +20,7 @@ body{
     /* border: 2px solid red; */
 }
 
-p{
+#country-quiz{
     position: relative;
     display: block;
     height: 54px;
@@ -35,15 +39,53 @@ p{
     padding: 30px;
     border-radius: 24px;
     width: 464px;
+    font-family: Poppins;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 36px;
+    text-align: left;
+    color: #2F527B;
+
+}
+
+img{
+    z-index: 1;
+    position: relative;
+    bottom: 100px;
+    left: 332px;
+    margin-bottom: -100px;
+}
+
+#question{
+    position: relative;
+    left: 20px;
 }
 
 button{
     height: 56px;
     width: 400px;
     margin: 25px;
-    background-color: white;
-    border: 2px solid rgba(96, 102, 208, 0.7);
+    border: 2px solid var(--purple);
     border-radius: 12px;
+    background-color: white;
+    color: var(--purple);
+    font-family: Poppins;
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 36px;
+    text-align: left;
+
+}
+
+span{
+    position: relative;
+    left: 46px;
+}
+
+button:hover{
+    background: #F9A826;
+    border-color: transparent;
+    color: white;
 }
 
 .attribution {
