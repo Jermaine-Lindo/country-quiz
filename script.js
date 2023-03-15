@@ -17,92 +17,76 @@ let country;
 let correct;
 let score = 0;
 
-function padCode(number){
-    number = number.toString();
-    while (number.length < 3)
-        number = "0" + number;
-        return number
-}
-
-function getCode() {
-    let code = Math.floor(Math.random() * (894 - 4 + 1)) + 4;
-    code = code - (code % 2); // Most numeric-3 codes are even
-    // Some countries do not have capital cities
-    if (code == 334)
-        return 340;
-    else if (code == 10)
-        return 12;
-    else if (code == 74)
-        return 76;
-    else if (code == 446)
-        return 450;
-    else
-        return code;
+function getRandomInt(N){
+    let int = Math.floor(Math.random() * N);
+    // some countries do not have a capital city
+    if ((int == 15) || (int == 17) || (int == 91) || (int == 237)){
+        return(getRandomInt(N));
+    }
+    return int;
 }
 
 async function fetchCountry(){
     let response;
-    do{
-    let code;
-    code = padCode(getCode());
-    console.log(code);
-    let finalURL = `https://restcountries.com/v3.1/alpha/${code}`;
+    let finalURL = "https://restcountries.com/v3.1/all?fields=name,capital"
     response = await fetch(finalURL);
-    } while(!response.ok);
     country = await response.json();
-    console.log(country)
+    console.log(country[237])
 }
 
-window.addEventListener("load", async () => {
-        await fetchCountry();
-        console.log(country);
-        countryName = country[0].name.common;
-        console.log(countryName);
-        correctCity = country[0].capital[0];
-        console.log(correctCity);
-        await fetchCountry();
-        console.log(country);
-        wrongCity1 = country[0].capital[0];
-        console.log(wrongCity1);
-        await fetchCountry();
-        console.log(country);
-        wrongCity2 = country[0].capital[0];
-        console.log(wrongCity2);
-        await fetchCountry();
-        console.log(country);
-        wrongCity3 = country[0].capital[0];
-        console.log(wrongCity3);
-        question.innerHTML = `What is the capital city of ${countryName}?`
-        let answer = Math.random();
-        if (answer < 0.25){
-            answer1.innerHTML = `${correctCity}`;
-            correct = 1;
-            answer2.innerHTML = `${wrongCity1}`;
-            answer3.innerHTML = `${wrongCity2}`;
-            answer4.innerHTML = `${wrongCity3}`;
-        }
-        else if (answer < 0.50){
-            answer1.innerHTML = `${wrongCity1}`;
-            answer2.innerHTML = `${correctCity}`;
-            correct = 2;
-            answer3.innerHTML = `${wrongCity2}`;
-            answer4.innerHTML = `${wrongCity3}`;
-        }
-        else if (answer < 0.75){
-            answer1.innerHTML = `${wrongCity1}`;
-            answer2.innerHTML = `${wrongCity2}`;
-            answer3.innerHTML = `${correctCity}`;
-            correct = 3;
-            answer4.innerHTML = `${wrongCity3}`;
-        }
-        else{
-            answer1.innerHTML = `${wrongCity1}`;
-            answer2.innerHTML = `${wrongCity2}`;
-            answer3.innerHTML = `${wrongCity3}`;
-            answer4.innerHTML = `${correctCity}`;
-            correct = 4;
-        }
-    });
+async function displayQuestion(){
+    await fetchCountry();
+    let correctNum = getRandomInt(250);
+    countryName = country[correctNum].name.common;
+    correctCity = country[correctNum].capital[0];
+    wrongNum = getRandomInt(250);
+    console.log(wrongNum);
+    wrongCity1 = country[wrongNum].capital[0];
+    wrongNum = getRandomInt(250);
+    console.log(wrongNum);
+    wrongCity2 = country[wrongNum].capital[0];
+    wrongNum = getRandomInt(250);
+    console.log(wrongNum);
+    wrongCity3 = country[wrongNum].capital[0];
+    console.log(correctCity);
+    console.log(wrongCity1);
+    console.log(wrongCity2);
+    console.log(wrongCity3);
+    question.innerHTML = `What is the capital city of ${countryName}?`
+    let answer = Math.random();
+    if (answer < 0.25){
+        answer1.innerHTML = `${correctCity}`;
+        correct = 1;
+        answer2.innerHTML = `${wrongCity1}`;
+        answer3.innerHTML = `${wrongCity2}`;
+        answer4.innerHTML = `${wrongCity3}`;
+    }
+    else if (answer < 0.50){
+        answer1.innerHTML = `${wrongCity1}`;
+        answer2.innerHTML = `${correctCity}`;
+        correct = 2;
+        answer3.innerHTML = `${wrongCity2}`;
+        answer4.innerHTML = `${wrongCity3}`;
+    }
+    else if (answer < 0.75){
+        answer1.innerHTML = `${wrongCity1}`;
+        answer2.innerHTML = `${wrongCity2}`;
+        answer3.innerHTML = `${correctCity}`;
+        correct = 3;
+        answer4.innerHTML = `${wrongCity3}`;
+    }
+    else{
+        answer1.innerHTML = `${wrongCity1}`;
+        answer2.innerHTML = `${wrongCity2}`;
+        answer3.innerHTML = `${wrongCity3}`;
+        answer4.innerHTML = `${correctCity}`;
+        correct = 4;
+    }
+}
+
+window.addEventListener("load", () => {
+    displayQuestion();
+});
 
 function disableButtons(){
     button1.disabled = true;
@@ -156,6 +140,9 @@ function showResultsPage(){
     retryButton.style.borderColor = "#1D355D";
     retryButton.style.textAlign = "center";
     container.appendChild(retryButton);
+    retryButton.addEventListener("click", ()=> {
+        location.reload();
+    });
 }
 
 button1.addEventListener("click", () => {
@@ -182,6 +169,7 @@ button2.addEventListener("click", () => {
     }
     else{
         button2.style.backgroundColor = "#EA8282";
+        showResultsPage();
     }
 });
 
@@ -195,6 +183,7 @@ button3.addEventListener("click", () => {
     }
     else{
         button3.style.backgroundColor = "#EA8282";
+        showResultsPage();
     }
 });
 
@@ -208,5 +197,6 @@ button4.addEventListener("click", () => {
     }
     else{
         button4.style.backgroundColor = "#EA8282";
+        showResultsPage();
     }
 });
