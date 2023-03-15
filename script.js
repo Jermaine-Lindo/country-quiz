@@ -7,6 +7,7 @@ const answer1 = document.getElementById("answer-1-text");
 const answer2 = document.getElementById("answer-2-text");
 const answer3 = document.getElementById("answer-3-text");
 const answer4 = document.getElementById("answer-4-text");
+const container = document.getElementById("card");
 let countryName1 = "";
 let correctCity = "";
 let wrongCity1 = "";
@@ -14,6 +15,7 @@ let wrongCity2 = "";
 let wrongCity3 = "";
 let country;
 let correct;
+let score = 0;
 
 function padCode(number){
     number = number.toString();
@@ -109,14 +111,64 @@ function disableButtons(){
     button4.disabled = true;
 }
 
+function createNextButton(){
+    const nextButton = document.createElement("button");
+    container.appendChild(nextButton);
+    nextButton.style.width = "116px"
+    nextButton.style.float = "right";
+    nextButton.style.position = "relative";
+    nextButton.style.right = "14px";
+    nextButton.style.bottom = "20px";
+    nextButton.style.marginBottom = "-20px";
+    nextButton.innerHTML = "Next";
+    nextButton.style.textAlign = "center";
+}
+
+function showResultsPage(){
+    const answers = document.getElementsByClassName("answer");
+    question.remove();
+    while (answers.length > 0){
+        answers[0].remove();
+    }
+    const image = document.getElementsByTagName("img")[0];
+    image.src = "./images/undraw_winners_ao2o 2.svg";
+    image.style.left = "0";
+    image.style.bottom = "0";
+    image.style.marginBottom = "30px"
+    const results = document.createElement("h2");
+    results.innerHTML = "Results";
+    results.style.textAlign = "center";
+    results.style.color = "#1D355D";
+    results.style.fontFamily = "Poppins";
+    results.style.fontSize = "48px";
+    results.style.fontWeight = "700";
+    container.appendChild(results)
+    const scoreText = document.createElement("p");
+    scoreText.innerHTML = "You got" + " <span>" + score +"</span>" + " correct answers";
+    scoreText.style.textAlign = "center";
+    scoreText.style.fontSize = "24px";
+    scoreText.style.fontWeight = "400";
+    container.appendChild(scoreText);
+    const retryButton = document.createElement("button");
+    retryButton.innerHTML = "Try again";
+    retryButton.style.width = "200px";
+    retryButton.style.color = "#1D355D";
+    retryButton.style.borderColor = "#1D355D";
+    retryButton.style.textAlign = "center";
+    container.appendChild(retryButton);
+}
+
 button1.addEventListener("click", () => {
     disableButtons();
     button1.style.color = "white";
     if (correct == 1){
         button1.style.backgroundColor = "#60BF88";
+        score++;
+        createNextButton();
     }
     else{
         button1.style.backgroundColor = "#EA8282";
+        showResultsPage();
     }
 });
 
@@ -125,6 +177,8 @@ button2.addEventListener("click", () => {
     button2.style.color = "white";
     if (correct == 2){
         button2.style.backgroundColor = "#60BF88";
+        score++;
+        createNextButton();
     }
     else{
         button2.style.backgroundColor = "#EA8282";
@@ -136,6 +190,8 @@ button3.addEventListener("click", () => {
     button3.style.color = "white";
     if (correct == 3){
         button3.style.backgroundColor = "#60BF88";
+        score++;
+        createNextButton();
     }
     else{
         button3.style.backgroundColor = "#EA8282";
@@ -147,6 +203,8 @@ button4.addEventListener("click", () => {
     button4.style.color = "white";
     if (correct == 4){
         button4.style.backgroundColor = "#60BF88";
+        score++;
+        createNextButton();
     }
     else{
         button4.style.backgroundColor = "#EA8282";
