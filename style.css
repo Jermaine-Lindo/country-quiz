@@ -72,6 +72,12 @@ button{
 
 }
 
+button:not(.answer):hover{
+    background: #F9A826;
+    border-color: transparent;
+    color: white;
+}
+
 .answer-text{
     position: relative;
     left: 46px;
@@ -81,12 +87,6 @@ span:not(.answer-text){
     color: #6FCF97;
     font-size: 36px;
     font-weight: 700;
-}
-
-button:hover{
-    background: #F9A826;
-    border-color: transparent;
-    color: white;
 }
 
 .attribution {
