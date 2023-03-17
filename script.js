@@ -4,6 +4,7 @@ const button2 = document.getElementById("answer-2");
 const button3 = document.getElementById("answer-3");
 const button4 = document.getElementById("answer-4");
 const buttonArray = [button1, button2, button3,  button4];
+const flag = document.getElementById("flag");
 const answer1 = document.getElementById("answer-1-text");
 const answer2 = document.getElementById("answer-2-text");
 const answer3 = document.getElementById("answer-3-text");
@@ -24,19 +25,32 @@ function buttonStyle(button, color, backgroundColor, borderColor) {
         border-color: ${borderColor};`;
 }
 
-buttonArray.forEach((button) =>{
+buttonArray.forEach((button, index) =>{
     button.addEventListener("mouseover", () => {
         buttonStyle(button, "white", "#F9A826", "transparent");
     });
     button.addEventListener("mouseleave", () => {
         buttonStyle(button, "#6066D0B2", "white", "#6066D0B2");
     });
+    button.addEventListener("click", () =>{
+        disableButtons();
+        if (correct === index) {
+            button.style.backgroundColor = "#60BF88";
+            score++;
+            createNextButton();
+        }
+        else {
+            button.style.backgroundColor = "#EA8282";
+            buttonStyle(buttonArray[correct], "white", "#60BF88", "transparent");
+            createResultButton();
+        }
+    })
 });
 
 function getRandomInt(N) {
     let int = Math.floor(Math.random() * N);
     // some countries do not have a capital city
-    if ((int === 15) || (int === 17) || (int === 91) || (int === 237)) {
+    if ((int === 42) || (int === 84) || (int === 99) || (int === 114)) {
         return (getRandomInt(N));
     }
     // prevent the same country being chosen twice
@@ -55,6 +69,41 @@ async function fetchCountry() {
     console.log(country);
 }
 
+function displayAnswers(correctAnswer, wrongAnswer1, wrongAnswer2, wrongAnswer3){
+    const answer = Math.random();
+    if (answer < 0.25) {
+        answer1.innerHTML = `${correctAnswer}`;
+        correct = 0;
+        answer2.innerHTML = `${wrongAnswer1}`;
+        answer3.innerHTML = `${wrongAnswer2}`;
+        answer4.innerHTML = `${wrongAnswer3}`;
+    }
+    else if (answer < 0.50) {
+        answer1.innerHTML = `${wrongAnswer1}`;
+        answer2.innerHTML = `${correctAnswer}`;
+        correct = 1;
+        answer3.innerHTML = `${wrongAnswer2}`;
+        answer4.innerHTML = `${wrongAnswer3}`;
+    }
+    else if (answer < 0.75) {
+        answer1.innerHTML = `${wrongAnswer1}`;
+        answer2.innerHTML = `${wrongAnswer2}`;
+        answer3.innerHTML = `${correctAnswer}`;
+        correct = 2;
+        answer4.innerHTML = `${wrongAnswer3}`;
+    }
+    else {
+        answer1.innerHTML = `${wrongAnswer1}`;
+        answer2.innerHTML = `${wrongAnswer2}`;
+        answer3.innerHTML = `${wrongAnswer3}`;
+        answer4.innerHTML = `${correctAnswer}`;
+        correct = 3;
+    }
+    if (nextButton !== undefined) {
+        nextButton.style.display = "none";
+    }
+}
+
 function displayCapitalQuestion(){
     chosenCountries = [];
     const correctNum = getRandomInt(250);
@@ -64,56 +113,44 @@ function displayCapitalQuestion(){
     const wrongCity2 = country[getRandomInt(250)].capital[0];
     const wrongCity3 = country[getRandomInt(250)].capital[0];
     question.innerHTML = `What is the capital city of ${countryName}?`
-    const answer = Math.random();
-    if (answer < 0.25) {
-        answer1.innerHTML = `${correctCity}`;
-        correct = 0;
-        answer2.innerHTML = `${wrongCity1}`;
-        answer3.innerHTML = `${wrongCity2}`;
-        answer4.innerHTML = `${wrongCity3}`;
-    }
-    else if (answer < 0.50) {
-        answer1.innerHTML = `${wrongCity1}`;
-        answer2.innerHTML = `${correctCity}`;
-        correct = 1;
-        answer3.innerHTML = `${wrongCity2}`;
-        answer4.innerHTML = `${wrongCity3}`;
-    }
-    else if (answer < 0.75) {
-        answer1.innerHTML = `${wrongCity1}`;
-        answer2.innerHTML = `${wrongCity2}`;
-        answer3.innerHTML = `${correctCity}`;
-        correct = 2;
-        answer4.innerHTML = `${wrongCity3}`;
-    }
-    else {
-        answer1.innerHTML = `${wrongCity1}`;
-        answer2.innerHTML = `${wrongCity2}`;
-        answer3.innerHTML = `${wrongCity3}`;
-        answer4.innerHTML = `${correctCity}`;
-        correct = 3;
-    }
-    if (nextButton !== undefined) {
-        nextButton.style.display = "none";
-    }
+    displayAnswers(correctCity, wrongCity1, wrongCity2, wrongCity3);
+    flag.style.display = "none";
+}
+
+function displayFlagQuestion(){
+    chosenCountries = [];
+    const correctNum = getRandomInt(250);
+    const countryName = country[correctNum].name.common;
+    const wrongCountry1 = country[getRandomInt(250)].name.common;
+    const wrongCountry2 = country[getRandomInt(250)].name.common;
+    const wrongCountry3 = country[getRandomInt(250)].name.common;
+    flag.src = country[correctNum].flags.svg;
+    flag.style.cssText = `
+    width: 84px;
+    height: 54px;
+    filter: drop-shadow(0px 4px 24px rgba(0, 0, 0, 0.1));
+    border-radius: 4px;
+    align-self: flex-start;
+    position: relative;
+    left: 10px`;
+    question.innerHTML = "Which country does this flag belong to?"
+    displayAnswers(countryName, wrongCountry1, wrongCountry2, wrongCountry3);
 }
 
 async function displayQuestion() {
-    await fetchCountry();
     chosenCountries = [];
     let chosenQeustion = questionType[getRandomInt(2)];
     if(chosenQeustion === "capital"){
-        console.log("capital");
         displayCapitalQuestion();
     }
     else if(chosenQeustion === "flag"){
-        console.log("flag");
-        displayCapitalQuestion();
+        displayFlagQuestion();
     }
 
 }
 
-window.addEventListener("load", () => {
+window.addEventListener("load", async () => {
+    await fetchCountry();
     displayQuestion();
 });
 
@@ -139,8 +176,8 @@ function createNextButton() {
         nextButton.style.cssText = `
             width: 116px;
             position: relative;
-            float: right;
-            right: 14px;
+            align-self: end;
+            left: 8px;
             bottom: 20px;
             margin-bottom: -20px;
             text-align: center;`;
@@ -149,8 +186,8 @@ function createNextButton() {
             enableButtons();
             buttonArray.forEach((button) => {
                 buttonStyle(button, "#6066D0B2", "white", "#6066D0B2")
-            })
-        })
+            });
+        });
     }
     else{
         nextButton.style.display = "block"
@@ -163,16 +200,16 @@ function createResultButton() {
     resultButton.innerHTML = "Results";
     resultButton.style.cssText = `
         width: 116px;
-        float: right;
         position: relative;
-        right: 14px;
+        align-self: end;
+        left: 8px;
         bottom: 20px;
         margin-bottom: -20px;
         text-align: center;`;
     resultButton.addEventListener("click", () => {
         resultButton.style.display = "none"
         showResultsPage();
-    })
+    });
 }
 
 function showResultsPage() {
@@ -184,6 +221,7 @@ function showResultsPage() {
     if (nextButton !== undefined) {
         nextButton.style.display = "none";
     }
+    flag.style.display = "none";
     const image = document.getElementsByTagName("img")[0];
     const results = document.createElement("h2");
     container.appendChild(results)
@@ -219,81 +257,3 @@ function showResultsPage() {
         location.reload();
     });
 }
-
-buttonArray.forEach((button, index) =>{
-    button.addEventListener("mouseover", () => {
-        buttonStyle(button, "white", "#F9A826", "transparent");
-    });
-    button.addEventListener("mouseleave", () => {
-        buttonStyle(button, "#6066D0B2", "white", "#6066D0B2");
-    });
-    button.addEventListener("click", () =>{
-        disableButtons();
-        if (correct === index) {
-            button.style.backgroundColor = "#60BF88";
-            score++;
-            createNextButton();
-        }
-        else {
-            button.style.backgroundColor = "#EA8282";
-            buttonStyle(buttonArray[correct], "white", "#60BF88", "transparent");
-            createResultButton();
-        }
-    })
-});
-
-// button1.addEventListener("click", () => {
-//     disableButtons();
-//     if (correct === 0) {
-//         button1.style.backgroundColor = "#60BF88";
-//         score++;
-//         createNextButton();
-//     }
-//     else {
-//         button1.style.backgroundColor = "#EA8282";
-//         buttonStyle(buttonArray[correct], "white", "#60BF88", "transparent");
-//         createResultButton();
-//     }
-// });
-
-// button2.addEventListener("click", () => {
-//     disableButtons();
-//     if (correct === 1) {
-//         button2.style.backgroundColor = "#60BF88";
-//         score++;
-//         createNextButton();
-//     }
-//     else {
-//         button2.style.backgroundColor = "#EA8282";
-//         buttonStyle(buttonArray[correct], "white", "#60BF88", "transparent")
-//         createResultButton();
-//     }
-// });
-
-// button3.addEventListener("click", () => {
-//     disableButtons();
-//     if (correct === 2) {
-//         button3.style.backgroundColor = "#60BF88";
-//         score++;
-//         createNextButton();
-//     }
-//     else {
-//         button3.style.backgroundColor = "#EA8282";
-//         buttonStyle(buttonArray[correct], "white", "#60BF88", "transparent")
-//         createResultButton();
-//     }
-// });
-
-// button4.addEventListener("click", () => {
-//     disableButtons();
-//     if (correct === 3) {
-//         button4.style.backgroundColor = "#60BF88";
-//         score++;
-//         createNextButton();
-//     }
-//     else {
-//         button4.style.backgroundColor = "#EA8282";
-//         buttonStyle(buttonArray[correct], "white", "#60BF88", "transparent")
-//         createResultButton();
-//     }
-// });
